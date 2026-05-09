@@ -1,0 +1,41 @@
+## Contact backend and env vars
+
+You can configure a simple serverless/contact backend one of three ways:
+
+1. SendGrid (recommended for production) — set SENDGRID_API_KEY, SENDGRID_TO_EMAIL, SENDGRID_FROM_EMAIL in your provider's environment variables.
+2. Formspree — set FORMSPREE_ENDPOINT to your Formspree endpoint (e.g. https://formspree.io/f/{id}).
+3. No mailer — the function will accept submissions, log them to the server logs, and return success so visitors don't see errors (useful for development).
+
+Files added
+
+- netlify/functions/contact.js — Netlify Function handler for POST /api/contact (redirected by netlify.toml)
+- api/contact.js — Vercel Serverless Function handler at /api/contact
+
+How the frontend connects
+
+- The frontend posts to /api/contact. For Vercel that maps to /api/contact. For Netlify the netlify.toml redirects /api/* to the function path so /api/contact works there too.
+
+Environment variables
+
+- SENDGRID_API_KEY — (optional) your SendGrid API key
+- SENDGRID_TO_EMAIL — the recipient email address (where you want to receive messages)
+- SENDGRID_FROM_EMAIL — the verified from address for SendGrid
+- FORMSPREE_ENDPOINT — (optional) your Formspree endpoint URL, e.g. https://formspree.io/f/abcd1234
+
+Examples (Netlify UI)
+
+- Site settings → Build & deploy → Environment → Add the variables above.
+
+Examples (Vercel UI)
+
+- Project → Settings → Environment Variables → Add the variables above.
+
+Notes
+
+- If both SendGrid and Formspree are configured, the function will prefer SendGrid.
+- The function will validate that name, email and message are present.
+- If no mailer is configured the payload will be logged to the function logs (use provider logs to inspect submissions).
+
+Security
+
+- Do not commit API keys into the repo. Use provider environment variables or secret managers.
